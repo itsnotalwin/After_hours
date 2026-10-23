@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Afterhours</title>
+<meta name="description" content="A paper-cut city that keeps living when you stop watching.">
+<meta name="theme-color" content="#F1F1F1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="view" aria-label="The city of Afterhours, drawn as a paper model"></canvas>
+<div id="grain"></div>
+
+<header id="top">
+  <div id="brand">AFTERHOURS</div>
+  <div id="clock"><b id="dayTxt">DAY 1</b><span id="timeTxt">07:10</span></div>
+  <button id="menuBtn" class="icon" aria-label="Menu">
+    <svg viewBox="0 0 24 24" width="22" height="22"><path d="M5 8h14M9 16h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+  </button>
+</header>
+
+<div id="tools">
+  <button id="zin" class="round" aria-label="Zoom in">+</button>
+  <button id="zout" class="round" aria-label="Zoom out">&minus;</button>
+  <button id="fit" class="round" aria-label="Show the whole city">
+    <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 3 21 8v8l-9 5-9-5V8z M12 12l9-4 M12 12v9 M12 12 3 8" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="none"/></svg>
+  </button>
+  <button id="webBtn" class="round" aria-label="Who feels what about whom">
+    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 6 5.5 17M12 6l6.5 11M5.5 17h13" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="12" cy="6" r="3" fill="currentColor"/><circle cx="5.5" cy="17" r="3" fill="var(--card)" stroke="currentColor" stroke-width="1.8"/><circle cx="18.5" cy="17" r="3" fill="var(--card)" stroke="currentColor" stroke-width="1.8"/></svg>
+  </button>
+  <button id="histBtn" class="round" aria-label="What has happened in the city">
+    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6 4h12v16H6z M9 8.5h6 M9 12h6 M9 15.5h4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
+<button id="alert" class="alert" hidden><i></i><span id="alertTxt"></span></button>
+<div id="fps" hidden></div>
+
+<div id="tip" role="status"></div>
+
+<section id="sheet" aria-label="Citizens">
+  <div id="chips"></div>
+  <div id="detailWrap"><div id="detail">
+    <div class="d-head">
+      <div class="d-name" id="dName"></div>
+      <div class="d-job" id="dJob"></div>
+    </div>
+    <div class="d-now"><i></i><span id="dNow"></span></div>
+    <div class="d-goal"><b>WANTS</b><span id="dGoal"></span></div>
+    <p class="d-thought" id="dThought" hidden></p>
+    <div class="sec">FEELS ABOUT</div>
+    <div class="bonds" id="dBonds"></div>
+    <p class="d-bio" id="dBio"></p>
+    <div class="traits" id="dTraits"></div>
+    <div class="d-actions">
+      <button class="pill" id="followBtn">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="15.5" cy="5" r="2.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M13 9.5 9 8 6 11l2 1.5M13 9.5l-2 4 3.5 2.5-.5 4.5M11 13.5 7 15M13 9.5l3.5 3H19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="followTxt">FOLLOW</span>
+      </button>
+    </div>
+  </div></div>
+</section>
+
+<div id="menu" class="overlay" hidden>
+  <div class="ov-card">
+    <button class="icon close" data-close aria-label="Close">&times;</button>
+    <h2>Afterhours</h2>
+    <p class="sub">Phase 2 &middot; Memory and relationships</p>
+    <p class="meta" id="seedTxt"></p>
+    <button class="pill" id="specBtn">SPECIMEN SHEET</button>
+    <button class="pill ghost" id="newBtn">NEW CITY</button>
+    <p class="fine">Pan with a drag, zoom with a pinch or wheel. Tap a citizen to follow them and read their mind. The web shows who feels what about whom; the ledger lists what has happened. Red means trouble. Time runs at one hour per minute and cannot be sped up. The city keeps living while you are away.</p>
+  </div>
+</div>
+
+<div id="spec" class="overlay" hidden>
+  <div class="ov-card wide">
+    <button class="icon close" data-close aria-label="Close">&times;</button>
+    <h2>Specimen sheet</h2>
+    <p class="sub">Every piece is generated in code from a seed.</p>
+    <button class="pill small" id="respec">NEW SAMPLES</button>
+    <div id="specGrid"></div>
+  </div>
+</div>
+
+<div id="hist" class="overlay" hidden>
+  <div class="ov-card wide">
+    <button class="icon close" data-close aria-label="Close">&times;</button>
+    <h2>The ledger</h2>
+    <p class="sub">Everything that has happened, newest first</p>
+    <div class="filters" id="histFilters"></div>
+    <div id="histList"></div>
+  </div>
+</div>
+
+<div id="web" class="overlay" hidden>
+  <div class="ov-card wide">
+    <button class="icon close" data-close aria-label="Close">&times;</button>
+    <h2>The web</h2>
+    <p class="sub">Who feels what about whom. Tap a person or a line.</p>
+    <svg id="webSvg" viewBox="0 0 420 300" role="img" aria-label="Relationship web"></svg>
+    <div id="webPanel"></div>
+  </div>
+</div>
+
+<div id="awayOv" class="overlay" hidden>
+  <div class="ov-card">
+    <button class="icon close" data-close aria-label="Close">&times;</button>
+    <h2>While you were away</h2>
+    <p class="sub" id="awayOvSub"></p>
+    <ul class="away-list" id="awayOvList"></ul>
+    <button class="pill" data-close>BACK TO THE CITY</button>
+  </div>
+</div>
+
+<div id="cover">
+  <svg class="cv-art" viewBox="0 0 400 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="9" stroke="#0A0A0A" stroke-opacity=".42" stroke-width="1"/></pattern>
+      <pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.1" fill="#0A0A0A" fill-opacity=".4"/></pattern>
+      <filter id="rough" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter>
+    </defs>
+    <circle cx="110" cy="330" r="190" fill="#E6E6E6"/>
+    <rect x="40" y="40" width="190" height="130" rx="18" fill="url(#hatch)"/>
+    <rect x="236" y="214" width="150" height="120" rx="18" fill="url(#dots)"/>
+    <path filter="url(#rough)" d="M214 292c18-40 70-58 120-38 40 16 80 46 76 100-4 58-60 96-122 90-52-5-96-34-88-82 4-26 2-48 14-70z" fill="#0A0A0A"/>
+    <g transform="translate(262 332) scale(1.1)" opacity=".95">
+      <path d="M0 0l40-20 40 20-40 20z" fill="#fff"/><path d="M0 0v34l40 20V20z" fill="#ECECEC"/><path d="M80 0v34L40 54V20z" fill="#CDCDCD"/>
+      <rect x="10" y="22" width="6" height="8" fill="#0A0A0A" transform="skewY(26)"/><rect x="22" y="28" width="6" height="8" fill="#0A0A0A" transform="skewY(26)"/>
+      <rect x="52" y="42" width="6" height="8" fill="#0A0A0A" transform="skewY(-26)"/><rect x="64" y="36" width="6" height="8" fill="#0A0A0A" transform="skewY(-26)"/>
+    </g>
+  </svg>
+  <div class="cv-body">
+    <h1>Afterhours</h1>
+    <p class="cv-sub">A city that keeps living when you stop watching.</p>
+    <p class="cv-by">You are not the main character. The city is.</p>
+    <div class="cv-away" id="awayTxt" hidden><p id="awayHead"></p><ul class="away-list" id="awayList"></ul></div>
+    <button class="pill" id="enterBtn" disabled><span id="enterTxt">CUTTING THE PAPER</span></button>
+    <div class="cv-prog" aria-hidden="true"><i id="progBar"></i></div>
+  </div>
+</div>
+
+<noscript><p style="padding:2rem;font:16px sans-serif">Afterhours needs JavaScript.</p></noscript>
+<script src="app.js"></script>
+</body>
+</html>
