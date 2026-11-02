@@ -46,17 +46,32 @@
 <div id="tip" role="status"></div>
 
 <section id="sheet" aria-label="Citizens">
-  <div id="chips"></div>
+  <div id="strip">
+    <button id="peopleBtn" class="peoplebtn" aria-label="Everyone in the city">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="9" cy="8" r="3.2" fill="currentColor"/><circle cx="17" cy="9.5" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 19c0-3.4 2.7-5.6 6-5.6s6 2.2 6 5.6M15.5 14c3 0 5.5 1.6 5.5 4.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <b id="peopleCount">40</b>
+    </button>
+    <div id="chips"></div>
+  </div>
   <div id="detailWrap"><div id="detail">
     <div class="d-head">
-      <div class="d-name" id="dName"></div>
-      <div class="d-job" id="dJob"></div>
+      <div class="d-titles">
+        <div class="d-name" id="dName"></div>
+        <div class="d-job" id="dJob"></div>
+      </div>
+      <div class="d-nav">
+        <button id="prevBtn" aria-label="Previous person">&lsaquo;</button>
+        <button id="nextBtn" aria-label="Next person">&rsaquo;</button>
+        <button id="closeBtn" aria-label="Close this card">&times;</button>
+      </div>
     </div>
+    <div class="d-home" id="dHome"></div>
     <div class="d-now"><i></i><span id="dNow"></span></div>
     <div class="d-goal"><b>WANTS</b><span id="dGoal"></span></div>
     <p class="d-thought" id="dThought" hidden></p>
-    <div class="sec">FEELS ABOUT</div>
+    <div class="sec-row"><div class="sec">FEELS ABOUT</div><div class="links"><button class="linkbtn" id="allBonds">WEB</button><button class="linkbtn" id="storyBtn">LEDGER</button></div></div>
     <div class="bonds" id="dBonds"></div>
+    <p class="d-more" id="dMore"></p>
     <p class="d-bio" id="dBio"></p>
     <div class="traits" id="dTraits"></div>
     <div class="d-actions">
@@ -72,11 +87,11 @@
   <div class="ov-card">
     <button class="icon close" data-close aria-label="Close">&times;</button>
     <h2>Afterhours</h2>
-    <p class="sub">Phase 2 &middot; Memory and relationships</p>
+    <p class="sub">Phase 2b &middot; A full town</p>
     <p class="meta" id="seedTxt"></p>
     <button class="pill" id="specBtn">SPECIMEN SHEET</button>
     <button class="pill ghost" id="newBtn">NEW CITY</button>
-    <p class="fine">Pan with a drag, zoom with a pinch or wheel. Tap a citizen to follow them and read their mind. The web shows who feels what about whom; the ledger lists what has happened. Red means trouble. Time runs at one hour per minute and cannot be sped up. The city keeps living while you are away.</p>
+    <p class="fine">Pan with a drag, zoom with a pinch or wheel. Tap a citizen, or open the people list, to follow someone and read their mind. Numbers on rooftops show who is inside. The web shows who feels what about whom; the ledger lists what has happened. Red means trouble. Time runs at one hour per minute and cannot be sped up. The city keeps living while you are away.</p>
   </div>
 </div>
 
@@ -90,13 +105,25 @@
   </div>
 </div>
 
+<div id="people" class="overlay" hidden>
+  <div class="ov-card wide">
+    <button class="icon close" data-close aria-label="Close">&times;</button>
+    <h2 id="peopleTitle">The people</h2>
+    <p class="sub" id="peopleSub"></p>
+    <input id="peopleQ" class="search" type="search" placeholder="Search by name, job or home" autocomplete="off" aria-label="Search people">
+    <div class="filters" id="peopleFilters"></div>
+    <div id="peopleList"></div>
+  </div>
+</div>
+
 <div id="hist" class="overlay" hidden>
   <div class="ov-card wide">
     <button class="icon close" data-close aria-label="Close">&times;</button>
     <h2>The ledger</h2>
-    <p class="sub">Everything that has happened, newest first</p>
+    <p class="sub" id="histSub">Everything that has happened, newest first</p>
     <div class="filters" id="histFilters"></div>
     <div id="histList"></div>
+    <button class="pill small ghost" id="histMore" hidden>SHOW EARLIER</button>
   </div>
 </div>
 
@@ -104,7 +131,8 @@
   <div class="ov-card wide">
     <button class="icon close" data-close aria-label="Close">&times;</button>
     <h2>The web</h2>
-    <p class="sub">Who feels what about whom. Tap a person or a line.</p>
+    <p class="sub" id="webSub">Who feels what about whom. Tap a person or a line.</p>
+    <div class="filters" id="webFilters"></div>
     <svg id="webSvg" viewBox="0 0 420 300" role="img" aria-label="Relationship web"></svg>
     <div id="webPanel"></div>
   </div>

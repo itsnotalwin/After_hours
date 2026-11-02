@@ -361,7 +361,7 @@
       g.save(); g.scale(1, 0.5); g.strokeStyle = night ? '#fff' : '#0A0A0A'; g.lineWidth = 1.3;
       g.setLineDash([3, 2.6]); g.lineDashOffset = -o.t * 6; g.beginPath(); g.arc(0, 0, 10.5, 0, 6.3); g.stroke(); g.restore();
     }
-    g.scale(o.dir || 1, 1);
+    g.scale((o.dir || 1) * (o.sc || 1), o.sc || 1);
     g.lineCap = 'round'; g.lineJoin = 'round';
     var ph = o.phase || 0, a = o.moving ? Math.sin(ph) * 0.62 : 0, bob = o.moving ? -Math.abs(Math.sin(ph)) * 0.9 : Math.sin(o.t * 2 + st) * 0.25;
     function limb(x0, y0, x1, y1, w) {
@@ -384,6 +384,7 @@
     g.beginPath(); AH.rr(g, -2.7, shY - 0.6, 5.4, hipY - shY + 1.8, 2.2);
     g.fillStyle = fl; g.fill();
     if (st === 2) { g.fillStyle = AH.pattern(g, AH.dotTile(2.4, 0.6, '#0A0A0A', 0.85), 0.25 * 1); g.fill(); }
+    else if (st === 3) { g.fillStyle = AH.pattern(g, AH.hatchTile(2.4, 0.5, '#0A0A0A', 0.9, 1), 0.25); g.fill(); }
     g.strokeStyle = ol; g.lineWidth = 1.3; g.stroke();
     // far arm in front for walking (second arm)
     if (!o.sit) limb(0, shY, Math.sin(a * 1.2) * 4.6, shY + Math.cos(a) * 4.4, 1.4);
@@ -391,10 +392,28 @@
     var hy = shY - 3.4;
     g.beginPath(); g.arc(0.5, hy, 2.9, 0, 6.3); g.fillStyle = st === 0 ? '#0A0A0A' : '#fff'; g.fill(); g.strokeStyle = ol; g.lineWidth = 1.3; g.stroke();
     g.fillStyle = ol;
-    if (o.acc === 'bun') { g.beginPath(); g.arc(-2.1, hy - 2.1, 1.7, 0, 6.3); g.fill(); }
-    else if (o.acc === 'cap') {
+    var acc = o.acc;
+    if (acc === 'bun') { g.beginPath(); g.arc(-2.1, hy - 2.1, 1.7, 0, 6.3); g.fill(); }
+    else if (acc === 'cap') {
       g.beginPath(); g.arc(0.5, hy - 0.4, 3.1, Math.PI, 0); g.closePath(); g.fill();
       g.fillRect(1, hy - 0.8, 4.2, 1.1);
+    } else if (acc === 'hat') {
+      g.beginPath(); g.arc(0.5, hy - 1.3, 2.4, Math.PI, 0); g.closePath(); g.fill();
+      g.beginPath(); AH.rr(g, -3.6, hy - 1.5, 8.2, 1.2, 0.6); g.fill();
+    } else if (acc === 'spike') {
+      g.beginPath(); g.moveTo(-2.4, hy - 1.6); g.lineTo(-2, hy - 5); g.lineTo(-0.7, hy - 2.6); g.lineTo(0.5, hy - 5.8); g.lineTo(1.7, hy - 2.6); g.lineTo(3, hy - 4.8); g.lineTo(3.3, hy - 1.4); g.closePath(); g.fill();
+    } else if (acc === 'pony') {
+      g.beginPath(); g.arc(0.3, hy - 0.5, 3.4, Math.PI * 0.92, Math.PI * 2.08); g.closePath(); g.fill();
+      g.beginPath(); g.ellipse(-3.7, hy + 0.9, 1.2, 2.6, 0.35, 0, 6.3); g.fill();
+    } else if (acc === 'curl') {
+      g.beginPath(); g.arc(0.1, hy - 0.8, 4.3, 0, 6.3); g.fill();
+      g.beginPath(); g.arc(0.9, hy + 0.7, 2.5, 0, 6.3); g.fillStyle = st === 0 ? '#0A0A0A' : '#fff'; g.fill(); g.strokeStyle = ol; g.lineWidth = 1.1; g.stroke();
+    } else if (acc === 'beanie') {
+      g.beginPath(); g.arc(0.5, hy - 0.3, 3.3, Math.PI, 0); g.closePath(); g.fill();
+      g.beginPath(); g.arc(0.5, hy - 3.9, 1.2, 0, 6.3); g.fill();
+      g.fillStyle = st === 0 ? '#0A0A0A' : '#fff'; g.fillRect(-2.2, hy - 1.7, 5.4, 0.7);
+    } else if (acc === 'bald') {
+      // nothing on top
     } else {
       g.beginPath(); g.arc(0.3, hy, 3.5, Math.PI * 0.9, Math.PI * 2.1); g.lineTo(-2.4, hy + 3.2); g.lineTo(-3.4, hy + 0.5); g.closePath(); g.fill();
     }

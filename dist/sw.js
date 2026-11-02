@@ -1,5 +1,5 @@
 /* Afterhours service worker: cache the app shell so the city opens offline. Bump VERSION on every release. */
-const VERSION = 'afterhours-v2-phase2';
+const VERSION = 'afterhours-v2b-town';
 const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest', 'icon.svg', 'icon-192.png', 'icon-512.png', 'icon-180.png'];
 self.addEventListener('install', (e) => { e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (e) => {

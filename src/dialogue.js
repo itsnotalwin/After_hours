@@ -43,6 +43,14 @@
     retort: { d: ['Oh, that is rich, coming from you.', 'Do not start with me.', 'At least I try.'], temper: ['Say that again. Go on.'], sociability: ['Everyone says you are impossible, you know.'] },
     escalate: { d: ['You always do this.', 'I am done being polite.', 'Say that again, I dare you.'], temper: ['Enough! I will not be spoken to like that!'] },
     huff: { d: ['Hmph. We are finished here.', 'Forget it. Just forget it.', 'I am leaving.'], honesty: ['I said what I meant. Good day.'] },
+    topicHome: { d: ['Who finished the milk?', 'The stairs creak worse every week.', 'Quiet night, I thought.', 'Is that your coat on the chair?', 'The kettle is making that noise again.', 'Someone has been in my cupboard.'] },
+    topicWork: { d: ['The filing is a mess again.', 'Lunch cannot come soon enough.', 'Did the boss say anything to you?', 'Someone moved my stapler.', 'Busy morning, was it not?', 'I have been on my feet since I came in.'] },
+    greetHome: { d: ['{tod}, {o}. Is there any tea?', 'Oh, {o}. There you are.', '{o}. Did you sleep at all?'] },
+    greetWork: { d: ['{o}. Did you get the memo?', '{tod}, {o}. Busy day.', 'Ah, {o}. Just who I needed.'] },
+    snipeHome: { d: ['You never clean up, {o}.', 'That is my shelf, {o}.', 'Could you keep the noise down, {o}?', 'Someone ate my bread, {o}.'] },
+    snipeWork: { d: ['That was my idea, {o}.', 'You took the credit again, {o}.', 'I did your share, {o}.', 'Please do not copy me on that, {o}.'] },
+    intro: { d: ['Hello. I do not think we have met. I am {me}.', 'New face! I am {me}.', 'Have we met? I am {me}.'], temper: ['Hm. I am {me}. And you are?'], sociability: ['Hello there! I am {me}, I am sure we will be friends.'] },
+    introReply: { d: ['{o}. Pleased to meet you.', 'Ah, {o}. A pleasure.', 'Good to meet you, {o}.'], temper: ['Right. {o}. Fine.'] },
     cbGood: { d: ['Still smiling about {pl}.', 'Remember {pl}? That was a good one.'] },
     cbBad: { d: ['Not another {pl} like last time, I hope.', 'I have not forgotten {pl}.'] }
   };
@@ -63,23 +71,25 @@
   AH.dialogue = {
     make: function (kind, pair, ctx, rng) {
       var A = pair[0], B = pair[1];
-      function v(s, o) { return { o: o.first, pl: ctx.pl, tod: tod(ctx.minute) }; }
+      var where = ctx.ctx === 'home' ? 'Home' : ctx.ctx === 'work' ? 'Work' : '';
+      // in a shared home or workplace, half the lines come from the matching set
+      function cx(base) { return where && L[base + where] && rng.chance(0.6) ? base + where : base; }
       function say(w, cat, extra) {
-        var sp = w === 0 ? A : B, ot = w === 0 ? B : A, vars = v(null, ot);
+        var sp = w === 0 ? A : B, ot = w === 0 ? B : A, vars = { o: ot.first, me: sp.first, pl: ctx.pl, tod: tod(ctx.minute) };
         if (extra) for (var k in extra) vars[k] = extra[k];
         return { who: sp.id, text: pick(cat, sp, rng, vars) };
       }
       var a = ctx.rel[0], b = ctx.rel[1], cold = Math.max(a.r, b.r) > 0.4 || (a.a + b.a) / 2 < -0.2, warm = (a.a + b.a) / 2 > 0.35;
       var first = (A.traits.temper + A.traits.sociability * 0.2 > B.traits.temper + B.traits.sociability * 0.2) ? 0 : 1;
       var out = [], sec = 1 - first;
-      var greetCat = cold ? 'cold' : warm ? 'warm' : 'greet';
+      var greetCat = ctx.first ? 'intro' : cold ? 'cold' : warm ? 'warm' : cx('greet');
       if (kind === 'chat') {
-        out.push(say(first, greetCat)); out.push(say(sec, 'topic'));
+        out.push(say(first, greetCat)); out.push(say(sec, ctx.first ? 'introReply' : cx('topic')));
         if (ctx.cb) out.push(say(first, ctx.cb.good ? 'cbGood' : 'cbBad', { pl: ctx.cb.pl }));
-        else out.push(say(first, 'topic'));
+        else out.push(say(first, cx('topic')));
         out.push(say(sec, 'farewell'));
       } else if (kind === 'laugh') {
-        out.push(say(first, greetCat)); out.push(say(sec, 'joke')); out.push(say(first, 'laugh'));
+        out.push(say(first, greetCat)); out.push(say(sec, ctx.first ? 'introReply' : 'joke')); out.push(say(first, ctx.first ? 'joke' : 'laugh')); if (ctx.first) out.push(say(sec, 'laugh'));
         if (ctx.cb && ctx.cb.good) out.push(say(sec, 'cbGood', { pl: ctx.cb.pl }));
         out.push(say(sec, 'farewell'));
       } else if (kind === 'favour') {
@@ -87,7 +97,7 @@
         out.push(say(r, 'ask')); out.push(say(g, 'offer')); out.push(say(r, 'thanks')); out.push(say(g, 'farewell'));
       } else {
         if (ctx.cb && !ctx.cb.good) out.push(say(first, 'cbBad', { pl: ctx.cb.pl }));
-        out.push(say(first, 'snipe')); out.push(say(sec, 'retort')); out.push(say(first, 'escalate')); out.push(say(sec, 'huff'));
+        out.push(say(first, cx('snipe'))); out.push(say(sec, 'retort')); out.push(say(first, 'escalate')); out.push(say(sec, 'huff'));
       }
       return out;
     }

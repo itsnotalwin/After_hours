@@ -8,7 +8,12 @@
   var K = { STREET: 0, LOT: 1, PARK: 2, OBST: 3 };
   var E = AH.ISO.E;
 
-  var LAST = ['Marlow', 'Quill', 'Voss', 'Hartigan', 'Ledger', 'Okafor', 'Brandt', 'Pell', 'Sorensen', 'Vance', 'Thistle', 'Arkwright', 'Delacroix', 'Nkemelu', 'Ashby', 'Lind'];
+  var LAST = ['Marlow', 'Quill', 'Voss', 'Hartigan', 'Ledger', 'Okafor', 'Brandt', 'Pell', 'Sorensen', 'Vance', 'Thistle', 'Arkwright', 'Delacroix', 'Nkemelu', 'Ashby', 'Lind',
+    'Fenwick', 'Aldous', 'Rooke', 'Tamsin', 'Gallo', 'Ibarra', 'Kessler', 'Moreau', 'Nakagawa', 'Oyelaran', 'Prewitt', 'Rastogi', 'Silva', 'Tarkington', 'Ulloa', 'Whitlock'];
+  // how many people each kind of building can house or employ
+  var RES_CAP = { home: { 4: 3, 8: 4, 16: 6 }, flat: { 4: 5, 8: 8, 16: 10 } };
+  var JOB_SLOTS = { hall: 7, cafe: 5, print: 5, shop: 4, office: 7, warehouse: 7 };
+  var CAP_TARGET = 46;              // enough beds for the biggest cast
   var CAFES = ["Marlow's Café", 'Half Moon Bakery', 'Kettle & Crumb', 'Ember Bakehouse', 'The Daily Crumb', 'Nightingale Café'];
   var PRINTS = ['Quill & Ledger', 'Inkwell Press', 'Hartigan Print', 'The Gazette Press'];
   var HALLS = ['City Hall', 'Civic Hall', 'Town Hall'];
@@ -99,36 +104,53 @@
     });
 
     /* ---- roles ---- */
-    var pool = buildings.filter(function (b) { return b.block.layout !== 'full'; });
+    var hall = buildings.filter(function (b) { return b.block.layout === 'full'; })[0];
+    hall.kind = 'hall'; hall.name = rng.pick(HALLS);
+    var pool = buildings.filter(function (b) { return b !== hall; });
     rng.shuffle(pool);
-    var usedBlocks = {};
+    var usedNames = {};
     function take(pred) {
       var idx = -1, n;
       for (n = 0; n < pool.length; n++) if (pred(pool[n])) { idx = n; break; }
       if (idx < 0) idx = 0;
       return pool.splice(idx, 1)[0];
     }
-    var hall = buildings.filter(function (b) { return b.block.layout === 'full'; })[0];
-    hall.kind = 'hall'; hall.name = rng.pick(HALLS);
-    var cafe = take(function (b) { return b.w * b.h >= 8; }); cafe.kind = 'cafe'; cafe.name = rng.pick(CAFES);
-    var print = take(function (b) { return b.w * b.h >= 4; }); print.kind = 'print'; print.name = rng.pick(PRINTS);
-    var homes = [];
-    for (i = 0; i < 3; i++) {
-      var hm = take(function (b) { return b.w * b.h <= 8 && !usedBlocks[b.block.bi + ',' + b.block.bj]; });
-      usedBlocks[hm.block.bi + ',' + hm.block.bj] = 1;
-      hm.kind = 'home'; hm.name = rng.pick(LAST) + ' House';
-      homes.push(hm);
+    function uniq(list, prefix, suffix) {
+      var nm, tries = 0;
+      do { nm = (prefix || '') + rng.pick(list) + (suffix || ''); tries++; } while (usedNames[nm] && tries < 60);
+      usedNames[nm] = 1; return nm;
     }
-    var usedNames = {};
+    var cafe = take(function (b) { return b.w * b.h >= 8; }); cafe.kind = 'cafe'; cafe.name = uniq(CAFES);
+    var print = take(function (b) { return b.w * b.h >= 4; }); print.kind = 'print'; print.name = uniq(PRINTS);
+    // housing: spread across the blocks, big buildings first, then top up with taller flats until there are beds for everyone
+    var RES = Math.max(2, Math.min(pool.length - 3, 9)), homes = [], perBlock = {};
+    while (homes.length < RES) {
+      var bi = -1, bv = 1e9;
+      pool.forEach(function (b, idx) { var v = (perBlock[b.block.bi + ',' + b.block.bj] || 0) * 10 - b.w * b.h * 0.3 + rng.next() * 2; if (v < bv) { bv = v; bi = idx; } });
+      var rb = pool.splice(bi, 1)[0], area = rb.w * rb.h;
+      perBlock[rb.block.bi + ',' + rb.block.bj] = (perBlock[rb.block.bi + ',' + rb.block.bj] || 0) + 1;
+      rb.kind = rng.next() < (area >= 8 ? 0.75 : 0.35) ? 'flat' : 'home';
+      homes.push(rb);
+    }
+    function capOf(b) { return RES_CAP[b.kind][b.w * b.h] || 4; }
+    var capTotal = 0;
+    homes.forEach(function (b) { capTotal += capOf(b); });
+    homes.slice().sort(function (p, q) { return q.w * q.h - p.w * p.h; }).forEach(function (b) {
+      if (capTotal >= CAP_TARGET || b.kind !== 'home') return;
+      capTotal -= capOf(b); b.kind = 'flat'; capTotal += capOf(b);
+    });
+    homes.forEach(function (b) {
+      b.name = b.kind === 'flat' ? uniq(LAST, '', ' Flats') : uniq(LAST, '', ' House');
+      b.cap = capOf(b);
+    });
     pool.forEach(function (b) {
       var area = b.w * b.h, r = rng.next();
       if (area >= 8 && r < 0.28) { b.kind = 'warehouse'; b.name = 'Freight Shed'; }
-      else if (r < 0.5) { b.kind = 'shop'; do { b.name = rng.pick(SHOPS); } while (usedNames[b.name] && Object.keys(usedNames).length < SHOPS.length); }
-      else if (r < 0.75) { b.kind = 'office'; do { b.name = rng.pick(OFFICES); } while (usedNames[b.name] && Object.keys(usedNames).length < OFFICES.length); }
-      else if (b.w * b.h <= 4 || r < 0.85) { b.kind = 'flat'; b.name = rng.pick(LAST) + ' Flats'; }
-      else { b.kind = 'home'; b.name = rng.pick(LAST) + ' House'; }
-      usedNames[b.name] = 1;
+      else if (r < 0.62) { b.kind = 'shop'; b.name = uniq(SHOPS); }
+      else { b.kind = 'office'; b.name = uniq(OFFICES); }
     });
+    var workplaces = [hall, cafe, print].concat(pool);
+    workplaces.forEach(function (b) { b.jobs = JOB_SLOTS[b.kind] || 3; });
 
     buildings.forEach(function (b) {
       var s = spec(b.kind, rng);
@@ -152,6 +174,8 @@
     var spots = benches.map(function (bn, idx) {
       return { t: 's', key: 'bench' + idx, x: bn.x + 0.5, y: bn.y + 0.5, sit: true, face: bn.dir, name: 'a park bench' };
     });
+    // standing room on the lawn ring, for people who stop to talk
+    [[8, 6], [9, 7], [6, 8], [7, 9]].forEach(function (t, idx) { spots.push({ t: 'g', key: 'lawn' + idx, x: t[0] + 0.5, y: t[1] + 0.5, sit: false, name: 'the lawn' }); });
 
     /* ---- lamps ---- */
     [[5, 5], [10, 5], [5, 10], [10, 10], [0, 5], [15, 5], [5, 0], [5, 15], [0, 10], [15, 10], [10, 0], [10, 15]].forEach(function (p, idx) {
@@ -164,7 +188,7 @@
 
     var world = {
       seed: seed, N: N, K: K, E: E, tiles: tiles, walk: walk, blocks: blocks, buildings: buildings, byId: byId,
-      trees: trees, lamps: lamps, benches: benches, spots: spots, homes: homes,
+      trees: trees, lamps: lamps, benches: benches, spots: spots, homes: homes, workplaces: workplaces, capacity: capTotal,
       cafe: cafe, print: print, hall: hall, park: park, parkName: rng.pick(PARKS),
       fountain: { x0: 7, y0: 7, x1: 9, y1: 9 },
       streetNames: { col: rng.shuffle(STREET_NAMES.slice()).slice(0, 2), row: rng.shuffle(STREET_NAMES.slice()).slice(0, 2) }
@@ -183,7 +207,13 @@
     };
 
     // shortest route over streets and park lawn
+    var pathCache = {};
     world.findPath = function (sx, sy, ex, ey) {
+      var ck = (sy * N + sx) * 1024 + (ey * N + ex);
+      if (pathCache[ck] !== undefined) return pathCache[ck];
+      return (pathCache[ck] = solvePath(sx, sy, ex, ey));
+    };
+    function solvePath(sx, sy, ex, ey) {
       var start = sy * N + sx, goal = ey * N + ex;
       if (start === goal) return [[sx, sy]];
       var prev = new Int16Array(N * N).fill(-1), q = [start], head = 0;
@@ -207,7 +237,7 @@
       path.push([sx, sy]);
       path.reverse();
       return path;
-    };
+    }
 
     return world;
   }

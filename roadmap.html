@@ -5,7 +5,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,800&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 /* Layout: the mind map opens the page (the whole game on one sheet), then the plan reads top to bottom:
-   where we are, the six phases, Phase 2 broken into work packages, decisions, risks.
+   where we are, the phases, Phases 2 and 2b broken into work packages, decisions, risks.
    Visual language is the game's own: paper, ink, halftone, red only for things that need you. */
 :root {
   --paper: #F1F1F1; --card: #FFFFFF; --ink: #0A0A0A; --mute: #6A6A6A; --line: #DADADA; --alert: #C8102E;
@@ -31,7 +31,7 @@ p { margin: 0; }
 /* opener */
 .hero { display: grid; gap: 22px; }
 .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-.fact { background: var(--card); border-radius: 22px; padding: 18px 20px; display: grid; gap: 4px; min-width: 0; }
+.fact { background: var(--card); border-radius: 22px; padding: 18px 20px; display: grid; gap: 4px; align-content: start; min-width: 0; }
 .fact b { font: 800 20px/1.15 var(--serif); }
 .fact span { font-size: 14px; color: var(--mute); }
 .fact.ink { background: var(--ink); color: var(--paper); }
@@ -53,16 +53,20 @@ p { margin: 0; }
 .mobilemap { display: none; padding: 6px 10px 12px; }
 @media (max-width: 759px) { #mapsvg, .legend + .hint { display: none; } .mobilemap { display: block; } }
 .hint { font-size: 12px; color: var(--mute); padding: 0 18px 10px; }
-#mapsvg text { font-family: var(--sans); fill: var(--ink); font-size: 13px; }
-#mapsvg .brt { font-weight: 700; font-size: 13.5px; letter-spacing: 0.02em; }
+#mapsvg text { font-family: var(--sans); fill: var(--ink); font-size: 14px; }
+#mapsvg .brt { font-weight: 700; font-size: 14px; letter-spacing: 0.02em; }
 #mapsvg .core { font-family: var(--serif); font-weight: 800; font-size: 23px; letter-spacing: 0.04em; fill: var(--paper); }
 #mapsvg .coresub { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; fill: var(--paper); opacity: 0.8; }
 #mapsvg .blob { fill: var(--ink); }
 #mapsvg .spoke { stroke: var(--ink); stroke-width: 1.6; fill: none; }
 #mapsvg .twig { stroke: var(--line); stroke-width: 1.2; fill: none; }
 #mapsvg .pill { fill: var(--card); stroke: var(--ink); stroke-width: 1.6; }
-#mapsvg .br { cursor: pointer; transition: opacity 0.25s; outline: none; }
-#mapsvg .br.dim { opacity: 0.5; }
+/* Focus is shown by fading lines and nodes, never the words: text stays at full strength so every label meets contrast. */
+#mapsvg .br { cursor: pointer; outline: none; }
+#mapsvg .br .spoke, #mapsvg .br .twig, #mapsvg .br circle { transition: opacity 0.25s; }
+#mapsvg .br.dim .spoke, #mapsvg .br.dim .twig, #mapsvg .br.dim circle { opacity: 0.45; }
+#mapsvg .br.dim .pill { stroke: var(--mute); }
+#mapsvg .br.dim .brt { fill: var(--mute); }
 #mapsvg .br:focus-visible .pill, #mapsvg .br.on .pill { fill: var(--ink); }
 #mapsvg .br:focus-visible .brt, #mapsvg .br.on .brt { fill: var(--paper); }
 #mapsvg .br.on .twig { stroke: var(--ink); }
@@ -150,12 +154,12 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); out
 <section class="hero">
   <div>
     <h1>Afterhours</h1>
-    <p class="lede">Plan of action after Phase 1: the whole game on one sheet, then the order we build it in.</p>
+    <p class="lede">Plan of action after Phase 2b: the whole game on one sheet, what is built, and what comes next.</p>
   </div>
   <div class="facts">
-    <div class="fact ink"><span class="eyebrow" style="color:inherit;opacity:.7">Built</span><b>Phase 1, the paper city</b><span>Three people living full days, free and follow camera, day and night, catch-up while away.</span></div>
-    <div class="fact"><span class="eyebrow">Next</span><b>Phase 2, memory and relationships</b><span>Eight work packages. This is the phase that makes the city feel alive.</span></div>
-    <div class="fact"><span class="eyebrow">Waiting on you</span><b><i class="dot"></i>Four small decisions</b><span>None block Phase 2. Defaults are listed below.</span></div>
+    <div class="fact ink"><span class="eyebrow" style="color:inherit;opacity:.7">Built</span><b>Phases 1, 2 and 2b</b><span>A paper town of forty people in households and workplaces, who meet, remember and fall out, with a people list, a web, a ledger and an away report that scale to all of them.</span></div>
+    <div class="fact"><span class="eyebrow">Next</span><b>Phase 3, the three verbs</b><span>Whisper, fund, introduce: your only ways to touch the city.</span></div>
+    <div class="fact"><span class="eyebrow">Waiting on you</span><b><i class="dot"></i>Four decisions and a phone check</b><span>Open the single file on your phone and tell me how it runs. Verb controls are needed before Phase 3. Defaults are listed below.</span></div>
   </div>
 </section>
 
@@ -169,12 +173,12 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); out
     <div class="mapcard">
       <div class="legend" aria-label="Legend">
         <span><i class="l-done"></i>Built</span>
-        <span><i class="l-next"></i>Phase 2, next up</span>
+        <span><i class="l-next"></i>Phase 3, next up</span>
         <span><i class="l-later"></i>Planned later</span>
         <span><i class="l-open"></i>Needs your call</span>
       </div>
       <p class="hint">Select a branch, or tab to it and press Enter.</p>
-      <svg id="mapsvg" viewBox="0 0 1200 880" role="group" aria-label="Mind map of the Afterhours game"></svg>
+      <svg id="mapsvg" viewBox="0 0 1180 780" role="group" aria-label="Mind map of the Afterhours game"></svg>
       <div class="mobilemap" id="mobilemap"></div>
     </div>
     <aside class="panel" id="panel" aria-live="polite"></aside>
@@ -185,16 +189,16 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); out
   <div class="sec-head">
     <div class="eyebrow">The plan</div>
     <h2 id="planH">Six phases, each one playable</h2>
-    <p>Every phase ends with a build you can open and play, not a pile of unfinished parts. If a phase runs long, we cut features from it, never ship it half-working.</p>
+    <p>Every phase ends with a build you can open and play, not a pile of unfinished parts. If a phase runs long, we cut features from it, never ship it half-working. Phase 2b was added when you asked for a bigger city.</p>
   </div>
   <div class="rail" id="rail"></div>
 </section>
 
 <section aria-labelledby="p2H">
   <div class="sec-head">
-    <div class="eyebrow">Phase 2 in detail</div>
+    <div class="eyebrow">Phase 2, built</div>
     <h2 id="p2H">Memory and relationships</h2>
-    <p>Right now each person follows a fixed script. After this phase they bump into each other, remember it, and act differently the next day.</p>
+    <p>Each person used to follow a fixed script. Now they bump into each other, remember it, and act differently the next day. All eight work packages are in.</p>
   </div>
   <div class="callout">
     <b>The one structural change: a day ledger</b>
@@ -202,12 +206,36 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); out
   </div>
   <div class="wps" id="wps"></div>
   <div class="exit">
-    <b style="font:800 20px/1.2 var(--serif)">Phase 2 is done when</b>
+    <b style="font:800 20px/1.2 var(--serif)">How Phase 2 measured up</b>
     <ul>
-      <li>After three in-game days, at least two pairs of citizens have clearly different relationships, and you can see why.</li>
-      <li>Leaving for 8 real hours returns a readable list of what happened, not just a number of days.</li>
-      <li>Two runs of the same seed produce identical histories (checked automatically).</li>
-      <li>The map holds a steady frame rate on a mid-range phone.</li>
+      <li>Met: pairs drift apart within days, and the web and ledger show why. After an argument at a place, the next-day visit rate there fell from 63% to 44% across 300 test cities.</li>
+      <li>Met: leaving or switching away returns the four biggest things that happened, with times, not just a day count.</li>
+      <li>Met: the same seed gives the same history, checked by hashing the ledger.</li>
+      <li>Built but not yet proven: offscreen skipping, sprite warm-up and adaptive resolution are in. Only tested on a software renderer so far, so a real phone check is still owed.</li>
+    </ul>
+  </div>
+</section>
+
+<section aria-labelledby="p2bH">
+  <div class="sec-head">
+    <div class="eyebrow">Phase 2b, built</div>
+    <h2 id="p2bH">A full town</h2>
+    <p>You asked for the city to grow. We settled on about forty people and more homes in the same district, with no extra map and no new businesses yet. Forty is a different game from three, so most of the work went into making that many people readable.</p>
+  </div>
+  <div class="callout">
+    <b>Forty people means 780 pairs</b>
+    <p>Three people meant three pairs and a handful of meetings a day. Forty means 780 pairs, about 63 conversations a day, about ten of them arguments, and a phone screen that used to hold three chips. So every part of the interface learned to summarise: counts on rooftops, a searchable people list, a strip of what is happening right now, and red alerts only for the rows that matter. Loading changed too. Replaying every day from day 0 costs 6 to 7 ms a day, so the game now saves the city's memory once a day and resumes from there.</p>
+  </div>
+  <div class="wps" id="wps2b"></div>
+  <div class="exit">
+    <b style="font:800 20px/1.2 var(--serif)">How Phase 2b measured up</b>
+    <ul>
+      <li>Met: one seed is still one history. Resuming from a snapshot gives exactly the same state as replaying every day (checked by hashing it), and the snapshot code left the history unchanged across 9 seeds and 25 days.</li>
+      <li>Met: loading stays flat. A day-300 city loads in about 0.47 s instead of 2.15 s on a desktop. A phone will be slower, probably around four times (an estimate).</li>
+      <li>Met: nothing broke. Seven seeds at desktop and phone sizes ran with no console or page errors, and offline reload, the away report and NEW CITY all work.</li>
+      <li>Met, with a note: arguments run at about ten a day town-wide, about five of which clear the bar for a red toast. With cooldowns that is roughly one toast every four real minutes. Every row is still in the ledger.</li>
+      <li>Not yet proven: phone speed. A frame costs about 8 to 12 ms of work on the software renderer I can test with. A real phone check is still owed.</li>
+      <li>Known gaps: a Phase 2 save loads a different town, ledger rows older than the newest 1,800 events keep one line instead of the dialogue, portrait phones leave empty space above and below the board, and settling the next day at 22:30 can cost about a frame on a slow phone.</li>
     </ul>
   </div>
 </section>
@@ -247,38 +275,39 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); out
 <script>
 (function () {
   'use strict';
-  var STATUS = { done: 'Built', next: 'Phase 2', later: 'Planned', open: 'Your call' };
+  var STATUS = { done: 'Built', next: 'Phase 3', later: 'Planned', open: 'Your call' };
 
   // [label, status, phase]
   var BRANCHES = [
     { id: 'sim', name: 'Living city', desc: 'The clock, the daily plans and the catch-up that let the city carry on without you.', leaves: [
-      ['Daily timelines', 'done', 1], ['Day, night and away catch-up', 'done', 1], ['Day ledger: history per day', 'next', 2], ['Catch-up in a worker thread', 'later', 5]] },
+      ['Daily timelines', 'done', 1], ['Day, night and away catch-up', 'done', 1], ['Day ledger and day snapshots', 'done', '2b'], ['Catch-up in a worker thread', 'later', 5]] },
     { id: 'people', name: 'Citizens', desc: 'Who lives here: traits, homes, jobs, and how they grow and change.', leaves: [
-      ['Three citizens with traits', 'done', 1], ['Goals and needs', 'next', 2], ['Careers that change', 'later', 4], ['Grow to about 12 people', 'later', 5]] },
+      ['Forty people in households', 'done', '2b'], ['Goals and needs', 'done', 2], ['Careers that change', 'later', 4], ['Grow past 40, second district', 'later', 5]] },
     { id: 'bonds', name: 'Relationships', desc: 'The heart of the game. People meet, form opinions of each other, and remember what happened.', leaves: [
-      ['Encounters between people', 'next', 2], ['Affinity, trust, rivalry', 'next', 2], ['Memory log that fades', 'next', 2], ['Relationship web view', 'next', 2], ['Gossip that spreads', 'later', 3]] },
+      ['Encounters between people', 'done', 2], ['Affinity, trust, rivalry', 'done', 2], ['Memory log that fades', 'done', 2], ['Relationship web view', 'done', 2], ['Gossip that spreads', 'next', 3]] },
     { id: 'voice', name: 'Voice and tone', desc: 'How the city talks. Short templated lines built from traits, mood and memory, never random text.', leaves: [
-      ['Speech bubbles', 'next', 2], ['Lines from traits and memory', 'next', 2], ['"While you were away" report', 'next', 2], ['Tone dial: quirky to grim', 'later', 4]] },
+      ['Speech bubbles', 'done', 2], ['Lines from traits and memory', 'done', 2], ['"While you were away" report', 'done', 2], ['Tone dial: quirky to grim', 'later', 4]] },
     { id: 'verbs', name: 'Player verbs', desc: 'Your only ways to touch the city. Indirect, limited, and they cost something.', leaves: [
-      ['Whisper a rumour', 'later', 3], ['Fund or withdraw', 'later', 3], ['Introduce two people', 'later', 3], ['One intervention a week', 'later', 3], ['Buttons or gestures?', 'open', 3]] },
+      ['Whisper a rumour', 'next', 3], ['Fund or withdraw', 'next', 3], ['Introduce two people', 'next', 3], ['One intervention a week', 'next', 3], ['Buttons or gestures?', 'open', 3]] },
     { id: 'econ', name: 'Businesses', desc: 'Shops and offices that open, grow, struggle, fail and change owners.', leaves: [
       ['Capital, revenue, reputation', 'later', 4], ['Open, expand, struggle, fail', 'later', 4], ['Owners change hands', 'later', 4], ['Names for city and money', 'open', 4]] },
     { id: 'pulse', name: 'Events and pulse', desc: 'The city’s mood as three meters, and the events that push it around.', leaves: [
-      ['Stability, tension, prosperity', 'later', 3], ['Weather and festivals', 'later', 4], ['Economic shifts', 'later', 4], ['Red alert state', 'later', 4]] },
+      ['Stability, tension, prosperity', 'next', 3], ['Weather and festivals', 'later', 4], ['Economic shifts', 'later', 4], ['Red alert state', 'later', 4]] },
     { id: 'dark', name: 'Crime and secrets', desc: 'What people hide, what goes wrong, and who finds out.', leaves: [
       ['Secrets people keep', 'later', 5], ['Crime events', 'later', 5], ['Investigation', 'later', 5], ['A second district', 'later', 5]] },
     { id: 'world', name: 'Paper world', desc: 'The look: procedural paper-craft buildings, trees and people, in ink and paper.', leaves: [
-      ['Procedural city and art', 'done', 1], ['Specimen sheet', 'done', 1], ['Interiors and lit windows', 'later', 4], ['Weather you can see', 'later', 4]] },
+      ['Procedural city and art', 'done', 1], ['Specimen sheet', 'done', 1], ['Rooftop counts, name labels', 'done', '2b'], ['Interiors and lit windows', 'later', 4], ['Weather you can see', 'later', 4]] },
     { id: 'platform', name: 'Platform and quality', desc: 'Keeping it installable, fast on phones, saved safely and testable.', leaves: [
-      ['Installable and offline', 'done', 1], ['Determinism and path tests', 'done', 1], ['Phone performance budget', 'next', 2], ['IndexedDB saves and migration', 'later', 6], ['Gazette archive', 'later', 6]] }
+      ['Installable and offline', 'done', 1], ['Determinism and path tests', 'done', 1], ['Phone performance budget', 'done', 2], ['IndexedDB saves and migration', 'later', 6], ['Gazette archive', 'later', 6]] }
   ];
 
   var PHASES = [
     { n: 1, name: 'The paper city', state: 'built', tag: 'Built', goal: 'Watch three people live full days in a seed-built isometric city.', ships: 'Camera and follow mode, day and night, catch-up while away, installable offline app.' },
-    { n: 2, name: 'Memory and relationships', state: 'now', tag: 'Next', goal: 'People meet, remember and react. Two seeds start to tell different stories.', ships: 'Encounters, relationship scores, memory log, speech bubbles, away report, relationship web.' },
-    { n: 3, name: 'The three verbs', state: '', tag: 'Planned', goal: 'You finally touch the city: whisper, fund, introduce, with a weekly limit.', ships: 'The three verbs, intervention cost, city pulse meters, gossip spreading.' },
+    { n: 2, name: 'Memory and relationships', state: 'built', tag: 'Built', goal: 'People meet, remember and react. Two seeds start to tell different stories.', ships: 'Encounters, relationship scores, memory log, speech bubbles, away report, relationship web.' },
+    { n: '2b', name: 'A full town', state: 'built', tag: 'Built', goal: 'Forty people in households and workplaces, in the same district, readable on a phone.', ships: 'People list, rooftop counts, live-conversation strip, calmer alerts, day snapshots for fast loading.' },
+    { n: 3, name: 'The three verbs', state: 'now', tag: 'Next', goal: 'You finally touch the city: whisper, fund, introduce, with a weekly limit.', ships: 'The three verbs, intervention cost, city pulse meters, gossip spreading.' },
     { n: 4, name: 'Businesses and events', state: '', tag: 'Planned', goal: 'Shops rise and fall, weather and festivals change the mood, the first red alert fires.', ships: 'Business lifecycle, event system, tone dial, red alert styling.' },
-    { n: 5, name: 'Crime, secrets, scale', state: '', tag: 'Planned', goal: 'Secrets, crime and investigation, about 12 people and a second district.', ships: 'Secrets, crime, investigation, larger cast, worker-thread simulation.' },
+    { n: 5, name: 'Crime, secrets, scale', state: '', tag: 'Planned', goal: 'Secrets, crime and investigation, a second district and a cast bigger than forty.', ships: 'Secrets, crime, investigation, larger cast, worker-thread simulation.' },
     { n: 6, name: 'History and polish', state: '', tag: 'Planned', goal: 'The city’s history becomes something you can read back and keep.', ships: 'Gazette archive, playthrough summary, IndexedDB saves, balance pass.' }
   ];
 
@@ -293,19 +322,29 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); out
     { id: '2.8', sz: 'M', t: 'Relationship web', what: 'A view of who feels what about whom, as a force-directed graph in the same ink style. Your HumanMap graph code is a natural starting point.', dep: '2.3', done: 'Tap a person, see their ties, tap a tie, see the memories behind it.' }
   ];
 
+  var WPS2B = [
+    { id: '2b.1', sz: 'M', t: 'People and homes', what: 'Households with room for several people, workplaces with job slots, about 15% retired and 10% between jobs. Housemates and colleagues start out knowing each other. Four figure styles, nine accessories and three sizes, so a crowd does not look cloned.', dep: 'Nothing. Do this first.', done: 'Every seed gives forty people and a bed for each. Across 300 test cities: 9 homes, 6 to 10 workplaces, 46 to 69 beds.' },
+    { id: '2b.2', sz: 'M', t: 'A busier day', what: 'Lunch with colleagues. Routine talk between housemates and workmates kept apart from chance meetings. At most five conversations a person a day, one at a time. People spread over the park instead of stacking on one tile.', dep: '2b.1', done: 'About 63 conversations a day, around three a person. In twenty test cities nobody averaged under one a day (the quietest averaged 1.3) or over five.' },
+    { id: '2b.3', sz: 'L', t: 'A map you can read', what: 'Rooftop initials and counts instead of forty floating tags. Speech bubbles stack by priority and never overlap. Names show at close zoom only for people you can actually see. Red alerts are rationed.', dep: '2b.1', done: 'Bubbles and labels did not overlap in the desktop and phone-size checks, and the toast rate came out near one every four real minutes.' },
+    { id: '2b.4', sz: 'M', t: 'Finding people', what: 'A people list with search, filters and household groups. Tap a rooftop number to see who is inside. A strip of conversations happening now. A close button on the citizen card. A web and a ledger with filters that scale to forty.', dep: '2b.3', done: 'Anyone is three taps away: tap the people button, type a name, tap the row.' },
+    { id: '2b.5', sz: 'M', t: 'Fast loads', what: 'Save the city’s memory once a day and resume from it instead of replaying from day 0. Events older than the newest 1,800 shrink to one-line records.', dep: '2b.2', done: 'A day-300 city loads in about 0.47 s instead of 2.15 s on a desktop, with an identical state.' }
+  ];
+
   var DECS = [
     { t: 'Verb controls', q: 'Whisper, fund and introduce as buttons in a panel, or as gestures on the map (hold and drag from one person to another)?', def: 'Buttons first. Gestures can be added later without changing the verbs.', when: 'Needed before Phase 3.' },
-    { t: 'Pacing', q: 'One in-game hour per real minute means a full day takes 24 minutes. Right speed, once you have watched it for a while?', def: 'Keep it. We tune it right after Phase 2, when there is more to watch.', when: 'Review after Phase 2.' },
+    { t: 'Pacing', q: 'One in-game hour per real minute means a full day takes 24 minutes. Right speed, once you have watched it for a while?', def: 'Keep it for now. Time away counts at one game minute per real second, so five hours away is about twelve game days.', when: 'Ready for your review.' },
     { t: 'Names', q: 'A name for the city and its money. Optional, but they show up in the Gazette and the UI.', def: 'The city stays "District 01" and money is plain "coins".', when: 'Any time.' },
-    { t: 'Tone', q: 'How dark should the people be? Gentle and quirky, or sharp with real grudges?', def: 'A mix that leans quirky, tipping toward grim as tension rises.', when: 'Before speech bubbles, in Phase 2.' }
+    { t: 'Tone', q: 'How dark should the people be? Gentle and quirky, or sharp with real grudges?', def: 'Shipped leaning quirky. With forty people there are about ten rows a day, so only the biggest raise a red toast. Tell me if it should bite harder, or be calmer.', when: 'Ready for your review.' },
+    { t: 'Phone check', q: 'Open the single-file build on your phone and watch it for a few minutes. Does it run smoothly with forty people, and does the people list feel quick?', def: 'If it stutters, I add a lower-detail mode and bring the worker thread forward from Phase 5. I have only been able to test on a software renderer.', when: 'Please do before Phase 3.' }
   ];
 
   var RISKS = [
-    ['Chaos instead of life', 'Random events can make a city feel noisy rather than alive.', 'Fix: after Phase 2, run 100 seeded days at once and read the stats before anyone sees it.'],
+    ['Chaos instead of life', 'Random events can make a city feel noisy rather than alive.', 'Checked at forty people: about 63 conversations a day and nobody under one a day. After a month about half of all 780 pairs have met: roughly 100 warm ties and 44 sour ones.'],
+    ['Too many rows', 'Ten arguments a day across forty people can read as noise, not drama.', 'Fix: red toasts are rationed to the person you follow and the biggest rows, with a cooldown. The ledger keeps every row, with filters. If it still feels loud, the dial is in the alert threshold.'],
     ['Cause and effect hidden', 'If you cannot see why something happened, the game feels arbitrary.', 'Fix: speech bubbles, the web view and the away report all show the reason.'],
-    ['Scope creep', 'Open world plus life sim can swallow everything.', 'Fix: one phase at a time, each playable. Features get cut, phases do not ship broken.'],
-    ['Phones struggling', 'More people and buildings means more drawing and more simulation.', 'Fix: a performance budget in Phase 2, off-screen skipping and a worker thread by Phase 5.'],
-    ['Saves breaking', 'New features change what a save contains.', 'Fix: version numbers on saves now, proper migration with IndexedDB in Phase 6.']
+    ['Scope creep', 'Open world plus life sim can swallow everything.', 'Fix: one phase at a time, each playable. Features get cut, phases do not ship broken. Phase 2b stayed scoped to more people, with no extra map.'],
+    ['Phones struggling', 'More people and buildings means more drawing and more simulation.', 'Phase 2 added off-screen skipping and adaptive resolution, and 2b added cached figures and rooftop counts. All measured on a software renderer only, so a real phone check is owed. A worker thread is still planned by Phase 5.'],
+    ['Saves breaking', 'New features change what a save contains.', 'Fix: saves and snapshots carry version numbers, and a snapshot that does not match is ignored and rebuilt. Phase 2 saves already load a different town. Proper migration with IndexedDB comes in Phase 6.']
   ];
 
   function el(tag, attrs, text) {
@@ -327,15 +366,17 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); out
     if (text != null) e.textContent = text;
     return e;
   }
-  var svg = document.getElementById('mapsvg'), CX = 600, CY = 440, RB = 160, RL = 335, YS = 0.8;
+  // Two columns of five branches either side of the ink blob, clockwise from the top right. Leaves stack in a column
+  // beside each branch, so labels can never run into each other whatever the font is.
+  var svg = document.getElementById('mapsvg'), CX = 590, CY = 390, SLOT = 150, LEAF = 28, PW = 184, PH = 36, YS = 0.8;
   var groups = {};
 
   // lumpy ink blob in the middle
   (function () {
     var n = 14, pts = [], i;
     for (i = 0; i < n; i++) {
-      var a = i / n * Math.PI * 2, r = 92 + Math.sin(a * 3 + 1) * 7 + Math.cos(a * 5) * 5;
-      pts.push([CX + Math.cos(a) * r, CY + Math.sin(a) * r * 0.8]);
+      var a = i / n * Math.PI * 2, r = 100 + Math.sin(a * 3 + 1) * 7 + Math.cos(a * 5) * 5;
+      pts.push([CX + Math.cos(a) * r, CY + Math.sin(a) * r * YS]);
     }
     function mid(p, q) { return [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; }
     var m0 = mid(pts[n - 1], pts[0]), d = 'M' + m0[0] + ' ' + m0[1];
@@ -344,26 +385,27 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); out
   })();
 
   BRANCHES.forEach(function (b, i) {
-    var ang = (-90 + i * 36) * Math.PI / 180, bx = CX + Math.cos(ang) * RB * 1.18, by = CY + Math.sin(ang) * RB * YS;
+    var side = i < 5 ? 1 : -1, slot = i < 5 ? i : 9 - i;          // right side top to bottom, then left side bottom to top
+    var by = CY + (slot - 2) * SLOT, bx = CX + side * 216, inner = bx - side * PW / 2, outer = bx + side * PW / 2, nodeX = CX + side * 342;
     var g = s('g', { 'class': 'br', tabindex: '0', role: 'button', 'aria-pressed': 'false', 'aria-label': b.name + ': ' + b.leaves.length + ' items', 'data-id': b.id });
-    var spoke = s('path', { 'class': 'spoke', d: 'M' + (CX + Math.cos(ang) * 78) + ' ' + (CY + Math.sin(ang) * 62) + 'L' + bx + ' ' + by });
-    g.appendChild(spoke);
-    var n = b.leaves.length;
+    // spoke: from inside the blob to the pill, as a soft S
+    var th = Math.atan2((by - CY) / YS, inner - CX), sx = CX + Math.cos(th) * 90, sy = CY + Math.sin(th) * 90 * YS, dx = inner - sx;
+    g.appendChild(s('path', { 'class': 'spoke', d: 'M' + sx + ' ' + sy + 'C' + (sx + dx * 0.6) + ' ' + sy + ' ' + (inner - dx * 0.3) + ' ' + by + ' ' + inner + ' ' + by }));
+    var n = b.leaves.length, mx = (outer + nodeX) / 2;
     b.leaves.forEach(function (l, j) {
-      var la = ang + (j - (n - 1) / 2) * 7.6 * Math.PI / 180, lx = CX + Math.cos(la) * RL, ly = CY + Math.sin(la) * RL * YS;
-      g.appendChild(s('path', { 'class': 'twig', d: 'M' + bx + ' ' + by + 'Q' + ((bx + lx) / 2) + ' ' + ((by + ly) / 2) + ' ' + lx + ' ' + ly }));
-      g.appendChild(s('circle', { cx: lx, cy: ly, r: l[1] === 'next' ? 6 : 5, 'class': 'nd-' + l[1] }));
-      var right = Math.cos(la) >= 0;
-      g.appendChild(s('text', { x: lx + (right ? 13 : -13), y: ly + 4.5, 'text-anchor': right ? 'start' : 'end', 'class': 'lf-' + l[1] }, l[0]));
+      var ly = by + (j - (n - 1) / 2) * LEAF;
+      g.appendChild(s('path', { 'class': 'twig', d: 'M' + outer + ' ' + by + 'C' + mx + ' ' + by + ' ' + mx + ' ' + ly + ' ' + nodeX + ' ' + ly }));
+      g.appendChild(s('circle', { cx: nodeX, cy: ly, r: l[1] === 'next' ? 6 : 5, 'class': 'nd-' + l[1] }));
+      g.appendChild(s('text', { x: nodeX + side * 13, y: ly + 5, 'text-anchor': side > 0 ? 'start' : 'end', 'class': 'lf-' + l[1] }, l[0]));
     });
-    var w = b.name.length * 7.9 + 30;
-    g.appendChild(s('rect', { x: bx - w / 2, y: by - 17, width: w, height: 34, rx: 17, 'class': 'pill' }));
+    g.appendChild(s('rect', { x: bx - PW / 2, y: by - PH / 2, width: PW, height: PH, rx: PH / 2, 'class': 'pill' }));
     g.appendChild(s('text', { x: bx, y: by + 5, 'text-anchor': 'middle', 'class': 'brt' }, b.name));
     svg.appendChild(g);
     groups[b.id] = g;
   });
-  svg.appendChild(s('text', { x: CX, y: CY + 2, 'text-anchor': 'middle', 'class': 'core' }, 'AFTERHOURS'));
-  svg.appendChild(s('text', { x: CX, y: CY + 26, 'text-anchor': 'middle', 'class': 'coresub' }, 'the city is the protagonist'));
+  svg.appendChild(s('text', { x: CX, y: CY - 2, 'text-anchor': 'middle', 'class': 'core' }, 'AFTERHOURS'));
+  svg.appendChild(s('text', { x: CX, y: CY + 22, 'text-anchor': 'middle', 'class': 'coresub' }, 'the city is'));
+  svg.appendChild(s('text', { x: CX, y: CY + 38, 'text-anchor': 'middle', 'class': 'coresub' }, 'the protagonist'));
 
   var panel = document.getElementById('panel'), active = null;
   function showPanel(b) {
@@ -412,15 +454,18 @@ button:focus-visible, summary:focus-visible { outline: 2px solid var(--ink); out
     c.appendChild(el('p', { 'class': 'ships' }, p.ships)); rail.appendChild(c);
   });
 
-  var wps = document.getElementById('wps');
-  WPS.forEach(function (w) {
-    var c = el('article', { 'class': 'wp' });
-    var left = el('div'); left.appendChild(el('div', { 'class': 'id' }, w.id)); left.appendChild(el('div', { 'class': 'sz' }, 'SIZE ' + w.sz));
-    var right = el('div'); right.appendChild(el('h3', null, w.t)); right.appendChild(el('p', { 'class': 'what' }, w.what));
-    var dl = el('dl');
-    [['Needs', w.dep], ['Done when', w.done]].forEach(function (r) { dl.appendChild(el('dt', null, r[0])); dl.appendChild(el('dd', null, r[1])); });
-    right.appendChild(dl); c.appendChild(left); c.appendChild(right); wps.appendChild(c);
-  });
+  function renderWps(list, host) {
+    list.forEach(function (w) {
+      var c = el('article', { 'class': 'wp' });
+      var left = el('div'); left.appendChild(el('div', { 'class': 'id' }, w.id)); left.appendChild(el('div', { 'class': 'sz' }, 'SIZE ' + w.sz));
+      var right = el('div'); right.appendChild(el('h3', null, w.t)); right.appendChild(el('p', { 'class': 'what' }, w.what));
+      var dl = el('dl');
+      [['Needs', w.dep], ['Done when', w.done]].forEach(function (r) { dl.appendChild(el('dt', null, r[0])); dl.appendChild(el('dd', null, r[1])); });
+      right.appendChild(dl); c.appendChild(left); c.appendChild(right); host.appendChild(c);
+    });
+  }
+  renderWps(WPS, document.getElementById('wps'));
+  renderWps(WPS2B, document.getElementById('wps2b'));
 
   var decs = document.getElementById('decs');
   DECS.forEach(function (d) {
